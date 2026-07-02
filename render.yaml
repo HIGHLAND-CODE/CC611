@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cc611-backend
+    env: node
+    plan: free
+    branch: main
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    autoDeploy: true
+    region: oregon
+    healthCheckPath: /api
