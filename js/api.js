@@ -1,5 +1,8 @@
 // API cliente genérica para el proyecto COBRANZAS-611.
-const API_BASE = '/api';
+// Si la aplicación está desplegada como sitio estático (GitHub Pages),
+// define `window.__API_BASE__` en `frontend/index.html` con la URL pública
+// del backend (p. ej. 'https://mi-backend.example.com').
+const API_BASE = (typeof window !== 'undefined' && window.__API_BASE__) ? window.__API_BASE__ : '/api';
 
 function saveSessionData(data) {
   localStorage.setItem('cobranzas611_session', JSON.stringify(data));
