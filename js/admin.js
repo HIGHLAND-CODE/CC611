@@ -8,7 +8,7 @@ const logoutBtnAdmin = document.getElementById('logoutBtn');
 function validateLogin() {
   const session = localStorage.getItem('cobranzas611_session');
   if (!session) {
-    window.location.href = '/frontend/index.html';
+    window.location.href = 'index.html';
   }
 }
 
@@ -24,12 +24,21 @@ async function handleUpload(form, messageElement, path) {
       body: formData,
     });
 
+    const responseText = await response.text();
+    const responseJson = (() => {
+      try {
+        return JSON.parse(responseText);
+      } catch {
+        return null;
+      }
+    })();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al subir el archivo.');
+      const errorMessage = responseJson?.message || responseText || 'Error al subir el archivo.';
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
+    const data = responseJson || { message: 'Archivo procesado correctamente.' };
     messageElement.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
   } catch (error) {
     messageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
@@ -55,6 +64,6 @@ if (adminFormVisitas) {
 if (logoutBtnAdmin) {
   logoutBtnAdmin.addEventListener('click', () => {
     localStorage.removeItem('cobranzas611_session');
-    window.location.href = '/frontend/index.html';
+    window.location.href = 'index.html';
   });
 }

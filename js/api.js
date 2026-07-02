@@ -40,7 +40,7 @@ async function apiFetch(path, options = {}) {
 function requireSession() {
   const session = getSessionData();
   if (!session) {
-    window.location.href = '/frontend/index.html';
+    window.location.href = 'index.html';
     throw new Error('Sesión no encontrada.');
   }
   return session;
@@ -48,5 +48,5 @@ function requireSession() {
 
 function logout() {
   clearSessionData();
-  window.location.href = '/frontend/index.html';
+  window.location.href = 'index.html';
 }

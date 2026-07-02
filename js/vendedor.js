@@ -8,7 +8,7 @@ const cobranzaMessage = document.getElementById('cobranzaMessage');
 function obtenerSesion() {
   const session = localStorage.getItem('cobranzas611_session');
   if (!session) {
-    window.location.href = '/frontend/index.html';
+    window.location.href = 'index.html';
     return null;
   }
   return JSON.parse(session);
@@ -105,7 +105,7 @@ async function enviarCobranza(event) {
 if (logoutBtnVendedor) {
   logoutBtnVendedor.addEventListener('click', () => {
     localStorage.removeItem('cobranzas611_session');
-    window.location.href = '/frontend/index.html';
+    window.location.href = 'index.html';
   });
 }
 

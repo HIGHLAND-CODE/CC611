@@ -26,7 +26,18 @@ app.get('/frontend/*', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+  res.redirect('/frontend/index.html');
+});
+
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || 'Error interno en el servidor.';
+
+  if (req.path.startsWith('/api')) {
+    return res.status(status).json({ message });
+  }
+
+  res.status(status).send(message);
 });
 
 app.listen(PORT, () => {

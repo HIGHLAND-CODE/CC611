@@ -23,9 +23,9 @@ async function handleLogin(event) {
     localStorage.setItem('cobranzas611_session', JSON.stringify(data));
 
     if (data.role === 'ADMIN') {
-      window.location.href = '/frontend/admin.html';
+      window.location.href = 'admin.html';
     } else {
-      window.location.href = '/frontend/vendedor.html';
+      window.location.href = 'vendedor.html';
     }
   } catch (error) {
     messageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
