@@ -2,9 +2,20 @@
 const loginForm = document.getElementById('loginForm');
 const messageElement = document.getElementById('message');
 
+function normalizeUsuario(input) {
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+  const upper = trimmed.toUpperCase();
+  if (upper === 'ADMIN') return 'admin';
+  if (upper.startsWith('V')) return upper;
+  if (/^\d+$/.test(upper)) return `V${upper}`;
+  return upper;
+}
+
 async function handleLogin(event) {
   event.preventDefault();
-  const usuario = document.getElementById('usuario').value.trim();
+  const rawUsuario = document.getElementById('usuario').value;
+  const usuario = normalizeUsuario(rawUsuario);
   const clave = document.getElementById('clave').value.trim();
 
   try {
@@ -14,12 +25,19 @@ async function handleLogin(event) {
       body: JSON.stringify({ usuario, clave }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error de autenticación.');
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = null;
     }
 
-    const data = await response.json();
+    if (!response.ok) {
+      const errorMessage = data?.message || responseText || 'Error de autenticación.';
+      throw new Error(errorMessage);
+    }
+
     localStorage.setItem('cobranzas611_session', JSON.stringify(data));
 
     if (data.role === 'ADMIN') {
