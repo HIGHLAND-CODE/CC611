@@ -1,19 +1,38 @@
+const fs = require('fs');
 const XLSX = require('xlsx');
 const { saveDeudasData, saveVisitasData } = require('../services/dataService');
 
-function parseWorkbook(fileBuffer) {
-  const workbook = XLSX.read(fileBuffer, { type: 'buffer', raw: false });
+function parseWorkbook(filePathOrBuffer) {
+  let workbook;
+  if (Buffer.isBuffer(filePathOrBuffer)) {
+    workbook = XLSX.read(filePathOrBuffer, { type: 'buffer', raw: false });
+  } else {
+    workbook = XLSX.readFile(filePathOrBuffer, { raw: false });
+  }
   const sheetName = workbook.SheetNames[0];
   return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { raw: false, defval: '' });
 }
 
+function cleanupFile(file) {
+  if (file && file.path) {
+    try {
+      fs.unlinkSync(file.path);
+    } catch (error) {
+      console.warn('No se pudo eliminar archivo temporal:', file.path, error.message);
+    }
+  }
+}
+
 exports.uploadDeudas = async (req, res) => {
+  console.log('uploadDeudas headers', req.headers['content-type']);
+  console.log('uploadDeudas file', req.file);
   if (!req.file) {
     return res.status(400).json({ message: 'Archivo de deudas no fue recibido.' });
   }
 
   try {
-    const rows = parseWorkbook(req.file.buffer);
+    const fileSource = req.file.path || req.file.buffer;
+    const rows = parseWorkbook(fileSource);
     const deudas = {};
 
     rows.forEach((row) => {
@@ -42,7 +61,10 @@ exports.uploadDeudas = async (req, res) => {
     await saveDeudasData(deudasArray);
     return res.json({ message: 'Deudas procesadas y guardadas.', registros: deudasArray.length });
   } catch (error) {
+    console.error('uploadDeudas error', error);
     return res.status(500).json({ message: 'Error al procesar el archivo de deudas.', error: error.message });
+  } finally {
+    cleanupFile(req.file);
   }
 };
 
