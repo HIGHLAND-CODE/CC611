@@ -34,8 +34,8 @@ async function handleUpload(form, messageElement, path) {
     })();
 
     if (!response.ok) {
-      const errorMessage = responseJson?.message || responseText || 'Error al subir el archivo.';
-      throw new Error(errorMessage);
+      const errorMessage = responseJson?.message || responseText || `Error al subir el archivo (HTTP ${response.status}).`;
+      throw new Error(`${errorMessage} ${responseJson ? '' : `(HTTP ${response.status})`}`.trim());
     }
 
     const data = responseJson || { message: 'Archivo procesado correctamente.' };
