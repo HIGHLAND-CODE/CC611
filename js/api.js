@@ -4,20 +4,20 @@
 // del backend (p. ej. 'https://mi-backend.example.com').
 const API_BASE = (typeof window !== 'undefined' && window.__API_BASE__) ? window.__API_BASE__ : '/api';
 
-function saveSessionData(data) {
+export function saveSessionData(data) {
   localStorage.setItem('cobranzas611_session', JSON.stringify(data));
 }
 
-function getSessionData() {
+export function getSessionData() {
   const stored = localStorage.getItem('cobranzas611_session');
   return stored ? JSON.parse(stored) : null;
 }
 
-function clearSessionData() {
+export function clearSessionData() {
   localStorage.removeItem('cobranzas611_session');
 }
 
-function getAuthHeaders() {
+export function getAuthHeaders() {
   const session = getSessionData();
   if (!session || !session.token) {
     return {};
@@ -25,7 +25,7 @@ function getAuthHeaders() {
   return { Authorization: `Bearer ${session.token}` };
 }
 
-async function apiFetch(path, options = {}) {
+export async function apiFetch(path, options = {}) {
   const headers = options.headers || {};
   const authHeaders = getAuthHeaders();
   const mergedHeaders = { ...headers, ...authHeaders };
@@ -40,7 +40,7 @@ async function apiFetch(path, options = {}) {
   return response.json();
 }
 
-function requireSession() {
+export function requireSession() {
   const session = getSessionData();
   if (!session) {
     window.location.href = 'index.html';
@@ -49,7 +49,7 @@ function requireSession() {
   return session;
 }
 
-function logout() {
+export function logout() {
   clearSessionData();
   window.location.href = 'index.html';
 }

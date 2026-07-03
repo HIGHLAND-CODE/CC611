@@ -1,4 +1,6 @@
 // Maneja el login en la página principal del sistema.
+import { apiFetch, saveSessionData } from './api.js';
+
 const loginForm = document.getElementById('loginForm');
 const messageElement = document.getElementById('message');
 
@@ -19,26 +21,13 @@ async function handleLogin(event) {
   const clave = document.getElementById('clave').value.trim();
 
   try {
-    const response = await fetch('/api/auth/login', {
+    const data = await apiFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ usuario, clave }),
     });
 
-    const responseText = await response.text();
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch {
-      data = null;
-    }
-
-    if (!response.ok) {
-      const errorMessage = data?.message || responseText || 'Error de autenticación.';
-      throw new Error(errorMessage);
-    }
-
-    localStorage.setItem('cobranzas611_session', JSON.stringify(data));
+    saveSessionData(data);
 
     if (data.role === 'ADMIN') {
       window.location.href = 'admin.html';
