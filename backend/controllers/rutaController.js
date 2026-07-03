@@ -24,17 +24,15 @@ exports.getRutaDiaria = async (req, res) => {
     const dayKey = DAY_MAP[dayName] || 'lunes';
 
     const clientesHoy = visitas.filter((item) => String(item[dayKey]).trim() === vendedorId);
-    const ruta = clientesHoy
-      .map((cliente) => {
-        const deuda = deudas.find((item) => String(item.clienteId) === String(cliente.codigo));
-        const saldo = deuda ? Number(deuda.saldo) : 0;
-        return {
-          clienteId: String(cliente.codigo),
-          razonSocial: cliente.razon_social || '',
-          saldo,
-        };
-      })
-      .filter((item) => item.saldo > 0);
+    const ruta = clientesHoy.map((cliente) => {
+      const deuda = deudas.find((item) => String(item.clienteId) === String(cliente.codigo));
+      const saldo = deuda ? Number(deuda.saldo) : 0;
+      return {
+        clienteId: String(cliente.codigo),
+        razonSocial: cliente.razon_social || '',
+        saldo,
+      };
+    });
 
     return res.json(ruta);
   } catch (error) {
